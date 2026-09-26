@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sliders, 
   Activity, 
@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { predictFloodRisk } from '../services/api';
 
-export default function RiskAssessmentTab({ onAssessmentComplete, initialInputs }) {
+export default function RiskAssessmentTab({ onAssessmentComplete, initialInputs, selectedState = 'All India', selectedScenario = 'urbanRunoff' }) {
   const [formData, setFormData] = useState(initialInputs || {
     rainfall: 165.0,
     river_level: 9.8,
@@ -48,6 +48,12 @@ export default function RiskAssessmentTab({ onAssessmentComplete, initialInputs 
     assessment_time: '25 Sep 2026, 11:15 UTC'
   });
   const [errorMessage, setErrorMessage] = useState(null);
+
+  useEffect(() => {
+    if (initialInputs) {
+      setFormData(initialInputs);
+    }
+  }, [initialInputs]);
 
   const handleInputChange = (field, val) => {
     setFormData(prev => ({

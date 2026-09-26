@@ -111,6 +111,10 @@ export default function App() {
   const [selectedState, setSelectedState] = useState('All India');
   const [visualizationMode, setVisualizationMode] = useState('2d');
 
+  useEffect(() => {
+    setSelectedStation(null);
+  }, [selectedState, activeScenario]);
+
   const filteredMapPoints = useMemo(
     () => getFilteredPointsByState(mapPoints, selectedState),
     [mapPoints, selectedState]
@@ -149,6 +153,11 @@ export default function App() {
     }
   };
 
+  const handleSelectState = (stateName) => {
+    setSelectedState(stateName);
+    setSelectedStation(null);
+  };
+
   const handleSelectStation = (st) => {
     const stateName = deriveStateFromCoordinates(st?.latitude, st?.longitude);
     if (stateName) setSelectedState(stateName);
@@ -178,7 +187,7 @@ export default function App() {
           onSelectScenario={handleScenarioChange}
           states={STATE_OPTIONS}
           selectedState={selectedState}
-          onSelectState={setSelectedState}
+          onSelectState={handleSelectState}
           mapViewMode={visualizationMode}
           onSetMapViewMode={setVisualizationMode}
         />
@@ -191,6 +200,7 @@ export default function App() {
               modelMetrics={modelMetrics}
               mapPoints={filteredMapPoints}
               selectedState={selectedState}
+              selectedScenario={activeScenario}
               onSelectStation={handleSelectStation}
               onNavigateTab={setActiveTab}
             />
@@ -199,6 +209,8 @@ export default function App() {
           {activeTab === 'risk-assessment' && (
             <RiskAssessmentTab 
               initialInputs={assessmentInputs}
+              selectedState={selectedState}
+              selectedScenario={activeScenario}
               onAssessmentComplete={(res, inputs) => {
                 setAssessmentInputs(inputs);
               }}
@@ -241,6 +253,8 @@ export default function App() {
           {activeTab === 'warnings' && (
             <EarlyWarningCenter 
               mapPoints={filteredMapPoints}
+              selectedState={selectedState}
+              selectedScenario={activeScenario}
               onSelectStation={handleSelectStation}
               onNavigateTab={setActiveTab}
             />
